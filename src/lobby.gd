@@ -33,8 +33,7 @@ func _connected_to_server():
 # client's function
 func _connection_failed():
 	debugprint.debugprint('Connection failed')
-	get_tree().set_network_peer(null)
-	get_tree().change_scene('res://src/MainMenu/MainMenu.tscn')
+	change_to_main_menu()
 
 
 func _network_peer_connected(id):
@@ -51,8 +50,7 @@ func _network_peer_disconnected(id):
 
 func _server_disconnected():
 	debugprint.debugprint('server disconnected')
-	get_tree().set_network_peer(null)
-	get_tree().change_scene('res://src/MainMenu/MainMenu.tscn')
+	change_to_main_menu()
 
 
 
@@ -84,3 +82,9 @@ func get_random_player_conf():
 	var conf = player.get_configuration()
 	player.free()
 	return conf
+
+
+
+func change_to_main_menu():
+	get_tree().set_network_peer(null)
+	get_tree().change_scene('res://src/MainMenu/MainMenu.tscn')
