@@ -1,4 +1,4 @@
-extends Node
+extends Control
 
 const PORT = 1111
 

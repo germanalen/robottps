@@ -1,30 +1,32 @@
-extends Spatial
+extends Node
 
 
 
 func _ready():
-	# Called every time the node is added to the scene.
-	# Initialization here
 	pass
 
 
 func get_configuration():
 	var conf_dict = {
-	name = get_name(), 
-	x = get_translation().x,
-	y = get_translation().y,
-	z = get_translation().z}
+	name = get_name(),
+	base_module_scene = get_node('Base').get_filename(),
+	base_module_conf = get_node('Base').get_configuration()
+	}
 	return conf_dict.to_json()
 
 func parse_configuration(conf):
 	var conf_dict = {}
 	conf_dict.parse_json(conf)
 	set_name(conf_dict.name)
-	set_translation(Vector3(conf_dict.x, conf_dict.y, conf_dict.z))
 	
-	var bottom = TestCube.new()
-	var top = TestCube.new()
-	top.set_translation(Vector3(0, 2, 0))
-	top.set_scale(Vector3(0.7, 0.7, 0.7))
-	bottom.add_child(top)
-	add_child(bottom)
+	var base_module = load(conf_dict.base_module_scene).instance()
+	base_module.parse_configuration(conf_dict.base_module_conf)
+	add_child(base_module)
+	
+	var player_shape = CapsuleShape.new()
+	player_shape.set_radius(2)
+	player_shape.set_height(4)
+	var player_shape_transform = Transform(Vector3(1,0,0), Vector3(0,0,1), Vector3(0,1,0), Vector3(0,4,0))
+	base_module.add_shape(player_shape)
+	base_module.set_shape_transform(base_module.get_shape_count()-1, player_shape_transform)
+
