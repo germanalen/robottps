@@ -68,6 +68,12 @@ remote func _register_player(player_conf):
 sync func _add_player(player_conf):
 	var player = player_packed.instance()
 	player.parse_configuration(player_conf)
+	
+	if player.get_name() == str(get_tree().get_network_unique_id()):
+		player.set_network_mode(NETWORK_MODE_MASTER)
+	else:
+		player.set_network_mode(NETWORK_MODE_SLAVE)
+	
 	get_node('/root/Game/Players').add_child(player)
 
 sync func _remove_player(id):
