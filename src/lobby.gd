@@ -17,7 +17,7 @@ func host_server(port):
 	var host = NetworkedMultiplayerENet.new()
 	host.create_server(port, 4)
 	get_tree().set_network_peer(host)
-	_register_player(get_random_player_conf())
+	_register_player(1, get_random_player_conf())
 
 func connect_to_server(ip, port):
 	debugprint.debugprint('Trying to connect...')
@@ -27,20 +27,20 @@ func connect_to_server(ip, port):
 
 func _connected_to_server():
 	debugprint.debugprint('Connected to server')
+	call_deferred("_deferred_connected_to_server")
+
+func _deferred_connected_to_server():
 	_new_game()
-	rpc_id(1, '_register_player', get_random_player_conf())
+	rpc_id(1, '_register_player', get_tree().get_network_unique_id(), get_random_player_conf())
 
 # client's function
 func _connection_failed():
 	debugprint.debugprint('Connection failed')
-	change_to_main_menu()
+	call_deferred("change_to_main_menu")
 
 
 func _network_peer_connected(id):
 	debugprint.debugprint(id, ' connected')
-	if get_tree().is_network_server():
-		for player in get_node('/root/Game/Players').get_children():
-			rpc_id(id, '_add_player', player.get_configuration())
 
 
 func _network_peer_disconnected(id):
@@ -50,7 +50,7 @@ func _network_peer_disconnected(id):
 
 func _server_disconnected():
 	debugprint.debugprint('server disconnected')
-	change_to_main_menu()
+	call_deferred("change_to_main_menu")
 
 
 
@@ -61,8 +61,13 @@ func _new_game():
 	get_tree().get_root().add_child(game_scene)
 	get_tree().set_current_scene(game_scene)
 
+
+
+
 # server's function
-remote func _register_player(player_conf):
+remote func _register_player(id, player_conf):
+	for player in get_node('/root/Game/Players').get_children():
+		rpc_id(id, '_add_player', player.get_configuration())
 	rpc('_add_player', player_conf)
 
 sync func _add_player(player_conf):
