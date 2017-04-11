@@ -1,8 +1,7 @@
 extends KinematicBody 
 
-var _player = null
-func set_player(player):
-	_player = player
+
+
  
 # input
 var _move_direction = Vector3() # server
@@ -18,7 +17,7 @@ var _server_rotation_y = 0 # client
  
 func _ready(): 
 	set_process_input(true) 
-	set_fixed_process(true) 
+	set_fixed_process(true)
  
  
 func _fixed_process(delta): 
@@ -34,33 +33,33 @@ func _input(event):
 	if is_network_master(): 
 		_local_input(event) 
  
- 
 func _server_update(delta): 
 	_move_direction = _move_direction.normalized() 
 	var speed = 20 
 	_velocity.x = 0 
 	_velocity.z = 0 
 	_velocity.y -= 40 * delta 
-	if _player.is_on_ground() && _player.get_steepness() < 1: 
+	if _get_player().is_on_ground() && _get_player().get_steepness() < 1: 
 		_velocity.x = _move_direction.x * speed 
 		_velocity.z = _move_direction.z * speed 
 	 
-	var motion = _player.get_transform().basis * _velocity * delta 
-	var remainder = _player.move(motion) 
-	if _player.is_colliding(): 
-		var collision_normal = _player.get_collision_normal() 
+	var motion = _get_player().get_transform().basis * _velocity * delta 
+	var remainder = _get_player().move(motion) 
+	if _get_player().is_colliding(): 
+		var collision_normal = _get_player().get_collision_normal() 
 		motion = collision_normal.slide(remainder) 
 		_velocity = collision_normal.slide(_velocity) 
-		_player.move(motion) 
+		_get_player().move(motion) 
 	
 	
-	_player.set_rotation(Vector3(0, _rotation_y, 0))
+	_get_player().set_rotation(Vector3(0, _rotation_y, 0))
+	
 	#This doesn't work because of the nature of euler angles
-#	var rotation = _player.get_rotation()
+#	var rotation = _get_player().get_rotation()
 #	rotation.y = _rotation_y
-#	_player.set_rotation(Vrotation)
+#	_get_player().set_rotation(rotation)
 	
-	rpc_unreliable('_set_client_state', _player.get_translation(), _rotation_y) 
+	lobby.rrpc_unreliable2(self, '_set_client_state', _get_player().get_translation(), _rotation_y) 
  
  
 remote func _set_server_input(move_direction, rotation_y): 
@@ -73,18 +72,19 @@ remote func _set_client_state(server_translation, server_rotation_y):
 
 
 func _client_update(delta): 
-	var translation = _player.get_translation() 
+	var translation = _get_player().get_translation() 
 	var weight = 50 
 	translation.x = lerp(translation.x, _server_translation.x, delta * weight) 
 	translation.y = lerp(translation.y, _server_translation.y, delta * weight) 
 	translation.z = lerp(translation.z, _server_translation.z, delta * weight) 
-	_player.set_translation(translation) 
+	_get_player().set_translation(translation) 
 	 
-#	_slerp_rotation(_player, _player.get_transform().basis.y, _server_rotation_y, 50)
+#	_slerp_rotation(_get_player(), _get_player().get_transform().basis.y, _server_rotation_y, 50)
 	_rotation_y = lerp(_rotation_y, _server_rotation_y, 10 * delta)
-	_player.set_rotation(Vector3(0, _rotation_y, 0))
+	_get_player().set_rotation(Vector3(0, _rotation_y, 0))
 
  
+
 var _key_pressed = {} 
 func _local_input(event): 
 	if event.type == InputEvent.KEY: 
@@ -99,7 +99,8 @@ func _local_input(event):
 		move_direction.x += -1 
 	if _key_pressed.has(KEY_D) && _key_pressed[KEY_D]: 
 		move_direction.x += 1 
-	 
+	
+	
 	if event.type == InputEvent.MOUSE_MOTION:
 		var sensitivity = -0.003
 		_rotation_y = fmod(_rotation_y + event.relative_x * sensitivity, PI * 2)
@@ -115,11 +116,25 @@ func _slerp_rotation(spatial, axis, rotation, weight):
 	transform.basis = Matrix3(Quat(transform.basis).slerp(Quat(axis, rotation), weight)) 
 	spatial.set_transform(transform) 
  
+
+func set_player(player):
+	get_node("Modules").set_player(player)
+
+func _get_player():
+	return get_node("Modules").get_player()
+
+func attach_module(module):
+	get_node("Modules").attach_module(module)
+
  
 func get_configuration(): 
-	var conf_dict = {}
+	var conf_dict = {
+	modules = get_node("Modules").get_configurations_array()
+	}
 	return conf_dict.to_json() 
  
 func parse_configuration(conf): 
 	var conf_dict = {} 
-	conf_dict.parse_json(conf) 
+	conf_dict.parse_json(conf)
+	
+	get_node("Modules").parse_configurations_array(conf_dict.modules)

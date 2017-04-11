@@ -16,8 +16,8 @@ shape_count = 1
 shapes/0/shape = SubResource( 1 )
 shapes/0/transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 4, 0 )
 shapes/0/trigger = false
-collision/layers = 1
-collision/mask = 1
+collision/layers = 2
+collision/mask = 0
 collide_with/static = true
 collide_with/kinematic = true
 collide_with/rigid = true
@@ -41,10 +41,14 @@ shape = SubResource( 1 )
 trigger = false
 _update_shape_index = 0
 
-[node name="Camera" type="Camera" parent="."]
+[node name="CameraController" type="Spatial" parent="."]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
-transform/local = Transform( 1, 0, 0, 0, 0.984171, 0.177219, 0, -0.177219, 0.984171, 0, 11.9864, 19.169 )
+
+[node name="Camera" type="Camera" parent="CameraController"]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+transform/local = Transform( 1, 0, 0, 0, 0.984171, 0.177219, 0, -0.177219, 0.984171, 0, 9.36879, 12.0472 )
 projection = 0
 fov = 60.0
 near = 0.1
@@ -56,12 +60,12 @@ environment = null
 h_offset = 0.0
 v_offset = 0.0
 
-[node name="AimRayCast" type="RayCast" parent="Camera"]
+[node name="AimRayCast" type="RayCast" parent="CameraController/Camera"]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 enabled = true
 cast_to = Vector3( 0, 0, -100 )
-layer_mask = 1
+layer_mask = 3
 type_mask = 15
 
 

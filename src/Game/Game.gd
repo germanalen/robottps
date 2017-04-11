@@ -1,5 +1,8 @@
 extends Node
 
+# Ground has collision layer's bit 1 set, 
+# because KinematicBody::move() doesn't use collision layer/mask correctly
+# bit 1 is for Player 
 
 func _ready():
 	set_process_input(true)

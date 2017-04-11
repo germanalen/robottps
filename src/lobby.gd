@@ -47,6 +47,7 @@ func _network_peer_disconnected(id):
 	debugprint.debugprint(id, ' disconnected')
 	if get_tree().is_network_server():
 		rpc('_remove_player', id)
+		_remove_player(id)
 
 func _server_disconnected():
 	debugprint.debugprint('server disconnected')
@@ -55,6 +56,7 @@ func _server_disconnected():
 
 
 func _new_game():
+	_ready_player_ids.clear()
 	get_tree().get_current_scene().free()
 	var game_packed_scene = load('res://src/Game/Game.tscn')
 	var game_scene = game_packed_scene.instance()
@@ -70,6 +72,9 @@ remote func _register_player(id, player_conf):
 		rpc_id(id, '_add_player', player.get_configuration())
 	rpc('_add_player', player_conf)
 
+
+var _ready_player_ids = []
+
 sync func _add_player(player_conf):
 	var player = player_packed.instance()
 	player.parse_configuration(player_conf)
@@ -80,8 +85,10 @@ sync func _add_player(player_conf):
 		player.set_network_mode(NETWORK_MODE_SLAVE)
 	
 	get_node('/root/Game/Players').add_child(player)
+	_ready_player_ids.append(int(player.get_name()))
 
-sync func _remove_player(id):
+remote func _remove_player(id):
+	_ready_player_ids.erase(id)
 	get_node('/root/Game/Players/' + str(id)).queue_free()
 
 
@@ -90,6 +97,17 @@ func get_random_player_conf():
 	randomize()
 	player.set_translation(Vector3(rand_range(-20, 20), 0, rand_range(-20, 20)))
 	player.set_name(str(get_tree().get_network_unique_id()))
+	
+	var hexapod = load("res://src/Modules/Hexapod/Hexapod.tscn").instance()
+	player.set_root_module(hexapod)
+	var aimer = load("res://src/Modules/Aimer/Aimer.tscn").instance()
+	aimer.set_translation(Vector3(0,2,0))
+	hexapod.attach_module(aimer)
+	var machine_gun = load("res://src/Modules/MachineGun/MachineGun.tscn").instance()
+	machine_gun.set_translation(Vector3(0,0.3,0))
+	aimer.attach_module(machine_gun)
+	
+	
 	var conf = player.get_configuration()
 	player.free()
 	return conf
@@ -99,3 +117,30 @@ func get_random_player_conf():
 func change_to_main_menu():
 	get_tree().set_network_peer(null)
 	get_tree().change_scene('res://src/MainMenu/MainMenu.tscn')
+
+
+
+func rrset_unreliable(node, property, val):
+	for id in _ready_player_ids:
+		if id != get_tree().get_network_unique_id():
+			node.rset_unreliable_id(id, property, val)
+
+func rrpc_unreliable1(node, method, arg1):
+	for id in _ready_player_ids:
+		if id != get_tree().get_network_unique_id():
+			node.rpc_unreliable_id(id, method, arg1)
+
+func rrpc_unreliable2(node, method, arg1, arg2):
+	for id in _ready_player_ids:
+		if id != get_tree().get_network_unique_id():
+			node.rpc_unreliable_id(id, method, arg1, arg2)
+
+func rrpc_unreliable3(node, method, arg1, arg2, arg3):
+	for id in _ready_player_ids:
+		if id != get_tree().get_network_unique_id():
+			node.rpc_unreliable_id(id, method, arg1, arg2, arg3)
+
+func rrpc_unreliable4(node, method, arg1, arg2, arg3, arg4):
+	for id in _ready_player_ids:
+		if id != get_tree().get_network_unique_id():
+			node.rpc_unreliable_id(id, method, arg1, arg2, arg3, arg4)
