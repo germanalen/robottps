@@ -1,10 +1,10 @@
-extends Spatial
+extends KinematicBody
 
 
 
 func _ready():
 	get_node("GroundRayCast").add_exception(self)
-	set_process(true)
+	set_fixed_process(true)
 	set_process_input(true)
 	
 	if is_network_master():
@@ -12,8 +12,12 @@ func _ready():
 	get_node("CameraController/Camera/AimRayCast").add_exception(self)
 
 
-func _process(delta):
-	
+func _fixed_process(delta):
+	if get_tree().is_network_server():
+		var root_module = _get_root_module()
+		if !root_module:
+			die_deferred()
+			lobby.rrpc0(self, "die_deferred")
 	pass
 
 
@@ -95,3 +99,11 @@ func parse_configuration(conf):
 #	aimer.attach_module(machine_gun)
 	
 	
+
+remote func die_deferred():
+	call_deferred("die")
+
+func die():
+	set_layer_mask(0)
+	if is_network_master():
+		get_node("/root/Game/Camera").make_current()
