@@ -1,13 +1,30 @@
 extends KinematicBody
 
 
+remote var _input_shoot = false
+
 
 func _ready():
 	set_fixed_process(true)
 
 
 func _fixed_process(delta):
-	pass
+	if is_network_master():
+		if get_tree().is_network_server():
+			_input_shoot = Input.is_mouse_button_pressed(BUTTON_LEFT)
+		else:
+			rset_unreliable_id(1, "_input_shoot", Input.is_mouse_button_pressed(BUTTON_LEFT))
+	
+	if get_tree().is_network_server():
+		var timer = get_node("Timer")
+		if _input_shoot && timer.get_time_left() <= 0:
+			timer.start()
+			var raycast = get_node("RayCast")
+			if raycast.is_colliding():
+				var collider = raycast.get_collider()
+				if collider:
+					if collider.has_method("get_health"):
+						collider.get_health().deal_damage(1)
 
 
 func set_player(player):

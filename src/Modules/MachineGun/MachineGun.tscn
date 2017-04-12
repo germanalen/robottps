@@ -55,10 +55,10 @@ _update_shape_index = 0
 [node name="RayCast" type="RayCast" parent="."]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
-transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0 )
+transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, -0.868364 )
 enabled = true
 cast_to = Vector3( 0, 0, -50 )
-layer_mask = 1
+layer_mask = 4
 type_mask = 15
 
 [node name="TestCube" type="TestCube" parent="RayCast"]
@@ -83,5 +83,12 @@ geometry/baked_light_tex_id = 0
 [node name="Health" parent="." instance=ExtResource( 2 )]
 
 _module_path = NodePath("..")
+
+[node name="Timer" type="Timer" parent="."]
+
+process_mode = 1
+wait_time = 0.2
+one_shot = true
+autostart = false
 
 
