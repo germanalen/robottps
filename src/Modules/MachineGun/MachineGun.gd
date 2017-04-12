@@ -19,12 +19,31 @@ func _fixed_process(delta):
 		var timer = get_node("Timer")
 		if _input_shoot && timer.get_time_left() <= 0:
 			timer.start()
+			emit_shoot_particles()
+			lobby.rrpc_unreliable0(self, "emit_shoot_particles")
 			var raycast = get_node("RayCast")
 			if raycast.is_colliding():
 				var collider = raycast.get_collider()
 				if collider:
 					if collider.has_method("get_health"):
 						collider.get_health().deal_damage(1)
+					emit_spark_particles(raycast.get_collision_point())
+					lobby.rrpc_unreliable1(self, "emit_spark_particles", raycast.get_collision_point())
+
+
+remote func emit_shoot_particles():
+	var particles = get_node("ShootParticles")
+	particles.set_emitting(false)
+	particles.set_emitting(true)
+
+
+remote func emit_spark_particles(pos):
+	var particles = get_node("SparkParticles")
+	var global_transform = particles.get_global_transform()
+	global_transform.origin = pos
+	particles.set_global_transform(global_transform)
+	particles.set_emitting(false)
+	particles.set_emitting(true)
 
 
 func set_player(player):

@@ -2,8 +2,9 @@
 
 [ext_resource path="res://src/Modules/Health.gd" type="Script" id=1]
 
-[node name="Health" type="Node"]
+[node name="Health" type="Spatial"]
 
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 script/script = ExtResource( 1 )
 _max_health = 10
 _module_path = null

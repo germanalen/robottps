@@ -104,7 +104,7 @@ func get_random_player_conf():
 	aimer.set_translation(Vector3(0,2,0))
 	hexapod.get_modules().attach_module(aimer)
 	var machine_gun = load("res://src/Modules/MachineGun/MachineGun.tscn").instance()
-	machine_gun.set_translation(Vector3(0,0.3,0))
+	machine_gun.set_translation(Vector3(0,1.5,0))
 	aimer.get_modules().attach_module(machine_gun)
 	
 	

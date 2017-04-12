@@ -1,4 +1,4 @@
-extends Node
+extends Spatial
 
 
 export var _max_health = 10
@@ -18,6 +18,13 @@ func deal_damage(damage):
 remote func die_deferred():
 	call_deferred("die")
 
+
 func die():
-	# boom, sparks, flames
+	var explosion = load("res://src/Modules/ExplosionParticles.tscn").instance()
+	get_node("/root/Game/Other").add_child(explosion)
+	var global_transform = explosion.get_global_transform()
+	global_transform.origin = get_global_transform().origin
+	explosion.set_global_transform(global_transform)
+	explosion.set_emitting(true)
+	
 	_module.free()

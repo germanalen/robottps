@@ -1,12 +1,13 @@
-[gd_scene load_steps=5 format=1]
+[gd_scene load_steps=6 format=1]
 
 [ext_resource path="res://src/Modules/Hexapod/Hexapod.gd" type="Script" id=1]
 [ext_resource path="res://src/Modules/Modules.tscn" type="PackedScene" id=2]
 [ext_resource path="res://src/Modules/Health.tscn" type="PackedScene" id=3]
+[ext_resource path="res://src/Modules/Hexapod/tracks.tscn" type="PackedScene" id=4]
 
 [sub_resource type="BoxShape" id=1]
 
-extents = Vector3( 2, 1, 1 )
+extents = Vector3( 2.5, 1, 2.5 )
 
 [node name="Hexapod" type="KinematicBody"]
 
@@ -26,25 +27,6 @@ collide_with/character = true
 collision/margin = 0.001
 script/script = ExtResource( 1 )
 
-[node name="TestCube" type="TestCube" parent="."]
-
-_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
-transform/local = Transform( 2, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
-layers = 1
-geometry/visible = true
-geometry/material_override = null
-geometry/cast_shadow = 1
-geometry/receive_shadows = true
-geometry/range_begin = 0.0
-geometry/range_end = 0.0
-geometry/extra_cull_margin = 0.0
-geometry/billboard = false
-geometry/billboard_y = false
-geometry/depth_scale = false
-geometry/visible_in_all_rooms = false
-geometry/use_baked_light = false
-geometry/baked_light_tex_id = 0
-
 [node name="Hitbox" type="CollisionShape" parent="."]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
@@ -58,5 +40,9 @@ _update_shape_index = 0
 [node name="Health" parent="." instance=ExtResource( 3 )]
 
 _module_path = NodePath("..")
+
+[node name="tracks" parent="." instance=ExtResource( 4 )]
+
+transform/local = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0.86429, 0 )
 
 
