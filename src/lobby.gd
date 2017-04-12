@@ -102,10 +102,10 @@ func get_random_player_conf():
 	player.set_root_module(hexapod)
 	var aimer = load("res://src/Modules/Aimer/Aimer.tscn").instance()
 	aimer.set_translation(Vector3(0,2,0))
-	hexapod.attach_module(aimer)
+	hexapod.get_modules().attach_module(aimer)
 	var machine_gun = load("res://src/Modules/MachineGun/MachineGun.tscn").instance()
 	machine_gun.set_translation(Vector3(0,0.3,0))
-	aimer.attach_module(machine_gun)
+	aimer.get_modules().attach_module(machine_gun)
 	
 	
 	var conf = player.get_configuration()
@@ -124,6 +124,11 @@ func rrset_unreliable(node, property, val):
 	for id in _ready_player_ids:
 		if id != get_tree().get_network_unique_id():
 			node.rset_unreliable_id(id, property, val)
+
+func rrpc_unreliable0(node, method):
+	for id in _ready_player_ids:
+		if id != get_tree().get_network_unique_id():
+			node.rpc_unreliable_id(id, method)
 
 func rrpc_unreliable1(node, method, arg1):
 	for id in _ready_player_ids:
@@ -144,3 +149,29 @@ func rrpc_unreliable4(node, method, arg1, arg2, arg3, arg4):
 	for id in _ready_player_ids:
 		if id != get_tree().get_network_unique_id():
 			node.rpc_unreliable_id(id, method, arg1, arg2, arg3, arg4)
+
+
+func rrpc0(node, method):
+	for id in _ready_player_ids:
+		if id != get_tree().get_network_unique_id():
+			node.rpc_id(id, method)
+
+func rrpc1(node, method, arg1):
+	for id in _ready_player_ids:
+		if id != get_tree().get_network_unique_id():
+			node.rpc_id(id, method, arg1)
+
+func rrpc2(node, method, arg1, arg2):
+	for id in _ready_player_ids:
+		if id != get_tree().get_network_unique_id():
+			node.rpc_id(id, method, arg1, arg2)
+
+func rrpc3(node, method, arg1, arg2, arg3):
+	for id in _ready_player_ids:
+		if id != get_tree().get_network_unique_id():
+			node.rpc_id(id, method, arg1, arg2, arg3)
+
+func rrpc4(node, method, arg1, arg2, arg3, arg4):
+	for id in _ready_player_ids:
+		if id != get_tree().get_network_unique_id():
+			node.rpc_id(id, method, arg1, arg2, arg3, arg4)

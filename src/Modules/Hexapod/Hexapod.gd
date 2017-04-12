@@ -123,10 +123,13 @@ func set_player(player):
 func _get_player():
 	return get_node("Modules").get_player()
 
-func attach_module(module):
-	get_node("Modules").attach_module(module)
+#func attach_module(module):
+#	get_node("Modules").attach_module(module)
 
- 
+func get_modules():
+	return get_node("Modules")
+
+
 func get_configuration(): 
 	var conf_dict = {
 	modules = get_node("Modules").get_configurations_array()
@@ -138,3 +141,7 @@ func parse_configuration(conf):
 	conf_dict.parse_json(conf)
 	
 	get_node("Modules").parse_configurations_array(conf_dict.modules)
+
+
+func get_health():
+	return get_node("Health")

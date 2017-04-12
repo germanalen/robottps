@@ -7,15 +7,16 @@ func _ready():
 
 
 func _fixed_process(delta):
-	
 	pass
 
 
 func set_player(player):
 	pass
 
-func attach_module(module):
-	pass
+#func attach_module(module):
+#	pass
+#
+
 
 func get_configuration():
 	var conf_dict = {
@@ -31,3 +32,7 @@ func parse_configuration(conf):
 	conf_dict.parse_json(conf)
 	
 	set_translation(Vector3(conf_dict.x, conf_dict.y, conf_dict.z))
+
+
+func get_health():
+	return get_node("Health")

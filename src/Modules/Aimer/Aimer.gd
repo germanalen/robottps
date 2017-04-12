@@ -37,8 +37,11 @@ func set_player(player):
 func _get_player():
 	return get_node("Head/Modules").get_player()
 
-func attach_module(module):
-	get_node("Head/Modules").attach_module(module)
+#func attach_module(module):
+#	get_node("Head/Modules").attach_module(module)
+
+func get_modules():
+	return get_node("Head/Modules")
 
 func get_configuration():
 	var conf_dict = {
@@ -56,3 +59,7 @@ func parse_configuration(conf):
 	get_node("Head/Modules").parse_configurations_array(conf_dict.modules)
 	
 	set_translation(Vector3(conf_dict.x, conf_dict.y, conf_dict.z))
+
+
+func get_health():
+	return get_node("Health")
