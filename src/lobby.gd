@@ -1,5 +1,6 @@
 extends Node
 
+var debugprint = null
 
 func _ready():
 	get_tree().connect("network_peer_connected", self, "_network_peer_connected")
@@ -7,6 +8,9 @@ func _ready():
 	get_tree().connect("connected_to_server", self, "_connected_to_server")
 	get_tree().connect("connection_failed", self, "_connection_failed")
 	get_tree().connect("server_disconnected", self, "_server_disconnected")
+	
+	debugprint = load("res://src/debugprint.gd").new()
+	get_node("/root").call_deferred("add_child", debugprint)
 
 
 var player_packed = preload('res://src/Player/Player.tscn')

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=1]
 
-[sub_resource type="FixedMaterial" id=3]
+[sub_resource type="FixedMaterial" id=1]
 
 flags/visible = true
 flags/double_sided = false
@@ -54,7 +54,7 @@ geometry/depth_scale = false
 geometry/visible_in_all_rooms = false
 geometry/use_baked_light = false
 geometry/baked_light_tex_id = 0
-material = SubResource( 3 )
+material = SubResource( 1 )
 amount = 50
 emitting = false
 visibility = AABB( -4, -4, -4, 8, 8, 8 )
